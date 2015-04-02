@@ -69,14 +69,13 @@ class Board(object):
             LOGGER.debug("length == number?: %d == %d: %d", 
                          length, self.arr[y_loc][x_loc].number, 
                          length == self.arr[y_loc][x_loc].number)
-            #if self.arr[y_loc][x_loc].state == Widget.BROKEN and length == self.arr[y_loc][x_loc].number:
+            
             if length == self.arr[y_loc][x_loc].number:
                 self.arr[y_loc][x_loc].remove()  # Destroy this widget
                 self.widget_count -= 1
 
                 # check if adjacent widgets are unbroken and if so crack them
                 self.check_adjacent(x_loc, y_loc)
-                #pygame.time.wait(1000)
                 return True
 
             # Check vertical widget removals
@@ -99,10 +98,9 @@ class Board(object):
 
                 # check if adjacent widgets are unbroken and if so crack them
                 self.check_adjacent(x_loc, y_loc)
-                #pygame.time.wait(1000)
                 return True
 
-            pygame.time.wait(500)
+            pygame.time.wait(50)
             return False
 
     def check_adjacent(self, x_loc, y_loc):
@@ -137,9 +135,6 @@ class Board(object):
 
 
 
-
-
-
     def drop(self, widget):
         """Drop the active widget down its current column until it lands.
 
@@ -163,15 +158,10 @@ class Board(object):
 
             # Drop until widget lands
             while widget.loc_y < 6 and self.arr[widget.loc_y + 1][widget.loc_x] == None:
-                #self.clear()      # Erase where widget was
                 widget.loc_y += 1         # Move down 1 spot
-                #self.draw()       # Redraw screen
-
 
             self.arr[widget.loc_y][widget.loc_x] = widget    # Lock in the widget's position
-            #self.clear()
             widget.active = 0     # Widget is now inactive
-            #self.draw()       # Redraw screen
 
             self.widget_count += 1
 
@@ -201,15 +191,10 @@ class Board(object):
                 while widget != None and next_spot == None and column_copy <= 5:
                     
                     my_widget = self.arr[column_copy][row]
-                    #my_widget.clear()
-
-                    #pygame.time.wait(200)
 
                     my_widget.loc_y += 1
                     self.arr[column_copy + 1][row] = my_widget 
                     self.arr[column_copy][row] = None
-
-                    #myWidget.redraw(prev_y=myWidget.loc_y-1)
 
                     move_event = WidgetMoveEvent()
                     move_event.prev_x = row
@@ -361,7 +346,6 @@ class Board(object):
         self.game_engine.level_widgets_remaining -= 1
 
         # Finished level widgets, level up - add unbroken row
-        #if config.level_widgets_remaining == 0:
         if self.game_engine.level_widgets_remaining == 0:
             self.game_engine.level += 1
             self.game_engine.score += 7000
@@ -369,14 +353,10 @@ class Board(object):
                 (self.game_engine.BASE_LEVEL_WIDGET_COUNT - 
                  self.game_engine.level + 1)
 
-            #config.level += 1
-            #config.score += 7000
-            #config.level_widgets_remaining = 
-            #   self.game_engine.BASE_LEVEL_WIDGET_COUNT - config.level + 1
             if (self.game_engine.level_widgets_remaining < 
                     self.game_engine.MINIMUM_LEVEL_WIDGET_COUNT):
                 self.game_engine.level_widgets_remaining += 1
-            #self.check_game_over(row_add=True)
+
             self.check_game_over(row_add=True)
             self.add_unbroken_row()
 
@@ -389,7 +369,7 @@ class Board(object):
         If a new row of unbroken widgets is about to be added (level up) and 
         there is a widget in the top row of the board (that will overflow on the
         level up), the game is over.
-        Sets config.game_over to indicate game is over.
+        Sets self.game_engine.game_over to indicate game is over.
 
         Args:
             row_add: Boolean indicating whether this game over check should 
@@ -438,4 +418,3 @@ class Board(object):
                     LOGGER.debug("%4d", 0)
                     #LOGGER.debug('{:4}'.format(0))
                     #print '{:4}'.format(0),
-# end Board class
