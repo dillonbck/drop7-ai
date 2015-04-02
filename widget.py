@@ -9,7 +9,6 @@ Classes:
 import logging
 import pygame
 from random import randint
-import config
 from eventmanager import *
 
 
@@ -43,14 +42,9 @@ class Widget(object):
         if unbroken or (randint(1, 8) == 8):    # mostly broken
             self.state = Widget.UNBROKEN
 
-            if config.use_gui:
-                self.sprite = config.icon_arr[7]
         else:
             self.state = Widget.BROKEN
             
-            if config.use_gui:
-                self.sprite = config.icon_arr[self.number - 1]
-
         if unbroken:
             self.loc_x = row
             self.loc_y = column
@@ -121,33 +115,6 @@ class Widget(object):
 
         self.delete = 1
 
-        if config.use_gui:
-            self.clear()
-            pygame.time.wait(100)
-
-
-    # def check_break(self):
-    #     new_sprite = None
-
-    #     if  self.cracked == True:
-    #         self.cracked = False
-    #         if config.use_gui:
-    #             new_sprite = config.icon_arr[self.number - 1]
-    #         #self.sprite = config.icon_arr[self.number - 1]
-    #         #self.draw()
-    #     if self.unbroken == True:
-    #         self.unbroken = False
-    #         self.cracked = True
-    #         if config.use_gui:
-    #             new_sprite = config.icon_arr[8]
-    #         #self.sprite = config.icon_arr[8]
-    #         #self.draw()
-
-    #     if config.use_gui:
-    #         if new_sprite is not None:
-    #             self.sprite = new_sprite
-    #             self.draw()
-
 
     def check_break(self):
         """Break or crack the widget.
@@ -181,10 +148,3 @@ class Widget(object):
             move_event.number = self.number
 
             self.game_engine.evManager.Post(move_event)
-
-        # if  self.cracked == True:
-        #     self.cracked = False
-
-        # if self.unbroken == True:
-        #     self.unbroken = False
-        #     self.cracked = True

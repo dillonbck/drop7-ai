@@ -3,9 +3,6 @@ from eventmanager import *
 
 from board import Board
 from widget import Widget
-import config
-
-
 
 
 class GameEngine(object):

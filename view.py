@@ -2,13 +2,24 @@ import pygame
 from pygame.locals import *
 import model
 from eventmanager import *
-import config
 from widget import Widget
 
 class GraphicalView(object):
     """
     Draws the model state onto the screen.
     """
+
+    SCREEN_HEIGHT = 480
+    SCREEN_WIDTH = 640
+    WIDGET_WIDTH = WIDGET_HEIGHT = 32
+
+    BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
+
+    ICON_ARR = [pygame.image.load("icons/"+str(z+1)+".png") for z in range(7)]
+    ICON_ARR.append(pygame.image.load("icons/unbroken.png"))
+    ICON_ARR.append(pygame.image.load("icons/cracked.png"))
+ 
 
     def __init__(self, evManager, model):
         """
@@ -116,25 +127,12 @@ class GraphicalView(object):
         self.smallfont = pygame.font.Font(None, 40)
         self.isinitialized = True
 
-        self.screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), DOUBLEBUF)
+        self.screen = pygame.display.set_mode((GraphicalView.SCREEN_WIDTH, GraphicalView.SCREEN_HEIGHT), DOUBLEBUF)
 
 
     def redraw(self, prev_x, cur_x, prev_y, cur_y, prev_active, cur_active, state, number):
         self.clear_widget(prev_active, prev_x, prev_y)
         self.draw_widget(cur_active, cur_x, cur_y, state, number)
-
-
-    # def redraw(self, prev_x=None, prev_y=None, prev_active=None):
-    #     if prev_x is None:
-    #         prev_x = self.loc_x
-    #     if prev_y is None:
-    #         prev_y = self.loc_y
-    #     if prev_active is None:
-    #         prev_active = self.active
-
-    #     if config.use_gui:
-    #         config.gui.clear_widget(prev_active, prev_x, prev_y)
-    #         config.gui.draw_widget(self.sprite, self.active, self.loc_x, self.loc_y)
 
 
     def clear_widget(self, active_widget, loc_x, loc_y):
@@ -143,17 +141,13 @@ class GraphicalView(object):
         else:
             y = loc_y+2
 
-        box = pygame.Rect(loc_x * config.WIDGET_WIDTH, y * config.WIDGET_HEIGHT, config.WIDGET_WIDTH-1, config.WIDGET_HEIGHT-1)
-        pygame.draw.rect(config.screen, config.BLACK, box, 0)
+        box = pygame.Rect(loc_x * GraphicalView.WIDGET_WIDTH, y * GraphicalView.WIDGET_HEIGHT, GraphicalView.WIDGET_WIDTH-1, GraphicalView.WIDGET_HEIGHT-1)
+        pygame.draw.rect(self.screen, GraphicalView.BLACK, box, 0)
         self.dirty_rects.append(box)
 
 
 
     def draw_widget(self, active_widget, loc_x, loc_y, state, number):
-        # if active_widget:
-        #     config.screen.blit(sprite, (loc_x * config.WIDGET_WIDTH, (loc_y+1) * config.WIDGET_HEIGHT))
-        # else:
-        #     config.screen.blit(sprite, (loc_x * config.WIDGET_WIDTH, (loc_y+2) * config.WIDGET_HEIGHT))
 
         if active_widget:
             y_modifier = 1
@@ -161,23 +155,23 @@ class GraphicalView(object):
             y_modifier = 2
 
         sprite = self.find_widget_sprite(state, number)
-        loc = (loc_x * config.WIDGET_WIDTH, (loc_y+y_modifier) * config.WIDGET_HEIGHT)
+        loc = (loc_x * GraphicalView.WIDGET_WIDTH, (loc_y+y_modifier) * GraphicalView.WIDGET_HEIGHT)
 
-        config.screen.blit(sprite, loc)
+        self.screen.blit(sprite, loc)
 
 
 
-        size = (config.WIDGET_WIDTH-1, config.WIDGET_HEIGHT-1)
+        size = (GraphicalView.WIDGET_WIDTH-1, GraphicalView.WIDGET_HEIGHT-1)
         box = pygame.Rect(loc, size)
         self.dirty_rects.append(box)
 
 
     def find_widget_sprite(self, state, number):
         if state == Widget.UNBROKEN:
-            sprite = config.icon_arr[7]
+            sprite = GraphicalView.ICON_ARR[7]
         elif state == Widget.CRACKED:
-            sprite = config.icon_arr[8]
+            sprite = GraphicalView.ICON_ARR[8]
         elif state == Widget.BROKEN:
-            sprite = config.icon_arr[number - 1]
+            sprite = GraphicalView.ICON_ARR[number - 1]
 
         return sprite
