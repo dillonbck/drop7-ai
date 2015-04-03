@@ -42,6 +42,8 @@ class GameEngine(object):
         self.game_over = False
 
         self.board = Board(self)
+        self.active_widget = None
+
 
     def notify(self, event):
         """
@@ -86,7 +88,8 @@ class GameEngine(object):
 
                 if self.game_over:
                     self.evManager.Post(QuitEvent())
-                    #break
+                    return
+
                 #logger.debug("widget_count: %d", self.board.widget_count)
                 self.board.print_board()
 
@@ -109,3 +112,17 @@ class GameEngine(object):
             newTick = TickEvent()
             self.evManager.Post(newTick)
 
+            self.newTurn()
+
+
+
+    def newTurn(self):
+        event = NewTurnEvent()
+        if self.active_widget.state != Widget.BROKEN:
+            event.widget_number = 0
+        else:
+            event.widget_number = self.active_widget.number
+
+        event.board = self.board.arr
+
+        self.evManager.Post(event)

@@ -2,9 +2,14 @@ import logging
 import random
 import time
 import pygame
+from eventmanager import *
+from widget import Widget
+
 
 
 logger = logging.getLogger(__name__)
+
+
 
 class AI:
     board = None
@@ -13,9 +18,40 @@ class AI:
     priority_moves = None
     priority_explanations = None
 
-    def __init__(self):
+    def __init__(self, evManager):
+        self.evManager = evManager
+        evManager.RegisterListener(self)
+
         return
 
+
+    def notify(self, event):
+        """
+        Called by an event in the message queue. 
+        """
+
+        if isinstance(event, QuitEvent):
+            pass
+
+        elif isinstance(event, NewTurnEvent):
+            logger.info("****NewTurnEvent")
+            widget_number = event.widget_number
+            board = event.board
+
+            move = self.home(board, widget_number)
+
+            while move != 0:
+                if move < 0:
+                    self.evManager.Post(MoveEvent(MoveEvent.DIR_LEFT))
+                    move += 1
+                else:
+                    self.evManager.Post(MoveEvent(MoveEvent.DIR_RIGHT))
+                    move -= 1
+
+            self.evManager.Post(MoveEvent(MoveEvent.DIR_DOWN))
+
+
+ 
     def home(self, board, widget_number):
         self.possible_moves = [0, 1, 2, 3, 4, 5, 6]
         self.priority_moves = [0, 0, 0, 0, 0, 0, 0]
@@ -251,33 +287,33 @@ class AI:
         for idx, height in enumerate(column_heights):
             if idx > 0:
                 if self.board[idx-1][height] is not None:
-                    if self.board[idx-1][height].unbroken:
+                    if self.board[idx-1][height].state == Widget.UNBROKEN:
                         adjacent_unbroken[idx] += 1
-                    elif self.board[idx-1][height].cracked:
+                    elif self.board[idx-1][height].state == Widget.CRACKED:
                         adjacent_cracked[idx] += 1
                     else:
                         adjacent_number[idx] += 1
             if idx < 6:
                 if self.board[idx+1][height] is not None:
-                    if self.board[idx+1][height].unbroken:
+                    if self.board[idx+1][height].state == Widget.UNBROKEN:
                         adjacent_unbroken[idx] += 1
-                    elif self.board[idx+1][height].cracked:
+                    elif self.board[idx+1][height].state == Widget.CRACKED:
                         adjacent_cracked[idx] += 1
                     else:
                         adjacent_number[idx] += 1
             if height > 0:
                 if self.board[idx][height-1] is not None:
-                    if self.board[idx][height-1].unbroken:
+                    if self.board[idx][height-1].state == Widget.UNBROKEN:
                         adjacent_unbroken[idx] += 1
-                    elif self.board[idx][height-1].cracked:
+                    elif self.board[idx][height-1].state == Widget.CRACKED:
                         adjacent_cracked[idx] += 1
                     else:
                         adjacent_number[idx] += 1
             if height < 6:
                 if self.board[idx][height+1] is not None:
-                    if self.board[idx][height+1].unbroken:
+                    if self.board[idx][height+1].state == Widget.UNBROKEN:
                         adjacent_unbroken[idx] += 1
-                    elif self.board[idx][height+1].cracked:
+                    elif self.board[idx][height+1].state == Widget.CRACKED:
                         adjacent_cracked[idx] += 1
                     else:
                         adjacent_number[idx] += 1   
@@ -399,3 +435,7 @@ class switch(object):
             return True
         else:
             return False
+
+
+
+
