@@ -21,7 +21,7 @@ class GraphicalView(object):
     ICON_ARR.append(pygame.image.load("icons/cracked.png"))
  
 
-    def __init__(self, evManager, model, view_active=True):
+    def __init__(self, evManager, model):
         """
         evManager (EventManager): Allows posting messages to the event queue.
         model (GameEngine): a strong reference to the game Model.
@@ -34,10 +34,7 @@ class GraphicalView(object):
         """
 
         self.evManager = evManager
-        if view_active:
-            evManager.RegisterListener(self)
-        else:
-            self.initialize()
+        evManager.RegisterListener(self)
         self.model = model
         self.isinitialized = False
         self.screen = None
@@ -64,7 +61,6 @@ class GraphicalView(object):
             self.clock.tick(30)
 
         elif isinstance(event, WidgetMoveEvent):
-            print("handling WidgetMoveEvent in view")
             prev_x = event.prev_x
             cur_x = event.cur_x
             prev_y = event.prev_y
@@ -75,8 +71,6 @@ class GraphicalView(object):
             number = event.number
 
             self.redraw(prev_x, cur_x, prev_y, cur_y, prev_active, cur_active, state, number)
-
-
 
         elif isinstance(event, WidgetCreateEvent):
             active_widget = event.active_widget

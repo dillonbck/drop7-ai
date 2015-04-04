@@ -100,7 +100,7 @@ class Board(object):
                 self.check_adjacent(x_loc, y_loc)
                 return True
 
-            #pygame.time.wait(50)
+            pygame.time.wait(50)
             return False
 
     def check_adjacent(self, x_loc, y_loc):
@@ -219,7 +219,7 @@ class Board(object):
                     
 
         if board_changed:
-            #pygame.time.wait(100)
+            pygame.time.wait(100)
 
             self.scoot()
         return board_changed
