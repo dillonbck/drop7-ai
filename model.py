@@ -43,6 +43,7 @@ class GameEngine(object):
 
         self.board = Board(self)
         self.active_widget = None
+        self.new_turn = True
 
 
     def notify(self, event):
@@ -95,6 +96,8 @@ class GameEngine(object):
 
                 self.active_widget = Widget(self)
 
+                self.new_turn = True
+
 
 
     def run(self):
@@ -112,7 +115,9 @@ class GameEngine(object):
             newTick = TickEvent()
             self.evManager.Post(newTick)
 
-            self.newTurn()
+            if self.new_turn:
+                self.new_turn = False
+                self.newTurn()
 
 
 
