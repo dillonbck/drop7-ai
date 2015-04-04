@@ -41,14 +41,6 @@ class MoveEvent(Event):
         self.name = "Move event"
 
 
-class NewTurnEvent(Event):
-
-    def __init__(self):
-        self.name = "New turn event"
-        self.widget_number = None
-        self.board = None
-
-
 class WidgetCreateEvent(Event):
 
     def __init__(self):
@@ -151,4 +143,3 @@ class EventManager(object):
             print(str(event))
         for listener in self.listeners.keys():
             listener.notify(event)
-            
